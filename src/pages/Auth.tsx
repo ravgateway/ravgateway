@@ -154,7 +154,7 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="login">
-              {/* Google Sign-In Button 
+              {/* Google Sign-In Button */}
               <div className="mt-4 mb-4">
                 <Button
                   type="button"
@@ -235,10 +235,10 @@ const Auth = () => {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
-            </TabsContent> */}
+            </TabsContent>
 
-            {/*<TabsContent value="signup">
-               //Google Sign-Up Button 
+            <TabsContent value="signup">
+              {/* Google Sign-Up Button */}
               <div className="mt-4 mb-4">
                 <Button
                   type="button"
@@ -330,12 +330,12 @@ const Auth = () => {
                   {loading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
-            </TabsContent> */}
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
     </div>
   );
-}; 
+};
 
 export default Auth;
