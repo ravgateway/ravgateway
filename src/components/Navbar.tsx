@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Wallet, LogOut, Menu, X } from "lucide-react";
+import { Wallet, LogOut, Menu, X, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -42,9 +42,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <div className="w-20 h-20 bg-background rounded-lg flex items-center justify-center white">           
-            <img src="/rav-logo.png" alt="Ravlogo w-8 h-8"/>
+            <img src="/rav-logo.png" alt="Rav logo w-8 h-8"/>
           </div>
-          {/*<span className="text-xl font-bold text-foreground">Rav</span>*/}
         </Link>
         
         {/* Desktop Navigation */}
@@ -56,6 +55,10 @@ const Navbar = () => {
               </Link>
               <Link to="/products" className="text-foreground hover:text-primary transition-colors">
                 Products
+              </Link>
+              <Link to="/invoices" className="text-foreground hover:text-primary transition-colors flex items-center gap-1">
+                <FileText className="w-4 h-4" />
+                Invoices
               </Link>
               <Link to="/payment" className="text-foreground hover:text-primary transition-colors">
                 My QR Code
@@ -101,6 +104,14 @@ const Navbar = () => {
                     Products
                   </Link>
                   <Link 
+                    to="/invoices" 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center gap-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <FileText className="w-5 h-5" />
+                    Invoices
+                  </Link>
+                  <Link 
                     to="/payment" 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
                     onClick={() => setIsOpen(false)}
@@ -116,7 +127,6 @@ const Navbar = () => {
                     className="justify-start h-12"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
-                    
                     Logout
                   </Button>
                 </>
