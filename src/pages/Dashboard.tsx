@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TransactionList, { Transaction } from "@/components/TransactionList";
+import AnalyticsChart from "@/components/AnalyticsChart";
 import { QrCode, Wallet, TrendingUp, FileText, Users, DollarSign, Clock, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -398,35 +399,11 @@ const Dashboard = () => {
         {/* Chart + Top Clients */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Daily Revenue Chart */}
-          <Card className={`p-6 lg:col-span-2 transition-all duration-700 delay-600 ${
+          <div className={`lg:col-span-2 transition-all duration-700 delay-600 ${
             cardsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
-            <h2 className="text-xl font-semibold mb-6 text-foreground">Daily Revenue</h2>
-            <div className="space-y-4">
-              {chartData.map((item, index) => {
-                const maxAmount = Math.max(...chartData.map(d => d.amount));
-                const percentage = maxAmount > 0 ? (item.amount / maxAmount) * 100 : 0;
-                
-                return (
-                  <div key={index} className="space-y-1 group">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground group-hover:text-foreground transition-colors">{item.day}</span>
-                      <span className="font-medium text-foreground">${item.amount.toFixed(2)}</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-primary h-full rounded-full transition-all duration-1000 ease-out hover:bg-primary/80"
-                        style={{ 
-                          width: `${percentage}%`,
-                          transitionDelay: `${700 + index * 100}ms`
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
+            <AnalyticsChart data={chartData} />
+          </div>
 
           {/* Top Clients */}
           <Card className={`p-6 transition-all duration-700 delay-700 ${
