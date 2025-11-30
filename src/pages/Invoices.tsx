@@ -460,7 +460,19 @@ const Invoices = () => {
                           <Mail className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                           <span className="hidden sm:inline">Send</span>
                         </Button>
-                      )}
+                       )}
+
+                       {/*Preview button*/}
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="h-9 text-xs sm:text-sm"
+                        onClick={() => navigate(`/invoice-preview/${invoice.id}`)}
+                      >
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                        <span className="hidden sm:inline">Preview</span>
+                      </Button>
+
                       <Button 
                         size="sm" 
                         variant="outline" 
