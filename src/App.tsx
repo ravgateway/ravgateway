@@ -13,6 +13,9 @@ import Success from "./pages/Success";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import SetupProfile from "./pages/SetupProfile";
+import Invoices from "./pages/Invoices";
+import InvoicePayment from "./pages/InvoicePayment";
+import InvoicePreview from "./pages/InvoicePreview";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,9 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/invoice/:invoiceId" element={<InvoicePayment />} />
+            <Route path="/invoice-preview/:invoiceId" element={<InvoicePreview />} />
             <Route path="/pay/:merchantId" element={<CustomerPayment />} />
             <Route path="/success" element={<Success />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
