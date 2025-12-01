@@ -76,11 +76,11 @@ const Payment = () => {
 />
 
 
-    // Basic validation for Ethereum/Celo address format
+    // Basic validation for Ethereum format
     if (!/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
       toast({
         title: "Invalid address format",
-        description: "Wallet address must be a valid Ethereum/Celo address (0x...)",
+        description: "Wallet address must be a valid Ethereum address (0x...)",
         variant: "destructive",
       });
       return;
@@ -147,7 +147,7 @@ const Payment = () => {
               <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                 {walletAddress 
                   ? "Customers will send payments to this wallet address" 
-                  : "Set up your Celo wallet address to receive payments"}
+                  : "Set up your EVM wallet address to receive payments"}
               </p>
               
               {isEditingWallet || !walletAddress ? (
