@@ -150,18 +150,61 @@ const Invoices = () => {
 
   const sendInvoice = async (invoiceId: string, invoiceNumber: string) => {
     try {
+      // Get invoice details with merchant profile
+      const { data: invoice, error: fetchError } = await supabase
+        .from("invoices")
+        .select(`
+          *,
+          profiles!invoices_merchant_id_fkey (
+            merchant_name,
+            email
+          )
+        `)
+        .eq("id", invoiceId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const merchantProfile = invoice.profiles;
+      const paymentLink = `${window.location.origin}/invoice/${invoiceId}`;
+
       // Update status to sent
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from("invoices")
         .update({ status: "sent" })
         .eq("id", invoiceId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      toast({
-        title: "Invoice sent!",
-        description: `Invoice ${invoiceNumber} has been marked as sent.`,
+      // Send invoice email via Edge Function
+      const { error: emailError } = await supabase.functions.invoke("send-invoice-email", {
+        body: {
+          invoiceNumber: invoice.invoice_number,
+          clientName: invoice.client_name,
+          clientEmail: invoice.client_email,
+          merchantName: merchantProfile?.merchant_name || "Merchant",
+          merchantEmail: merchantProfile?.email || "",
+          amount: invoice.amount,
+          dueDate: invoice.due_date,
+          description: invoice.description,
+          paymentLink: paymentLink,
+          status: "created" // This tells the Edge Function to send "invoice created" emails
+        }
       });
+
+      if (emailError) {
+        console.error("Email send error:", emailError);
+        toast({
+          title: "Invoice sent (email may have failed)",
+          description: `Invoice ${invoiceNumber} status updated, but email notification may not have been sent.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Invoice sent!",
+          description: `Invoice ${invoiceNumber} has been sent to ${invoice.client_name}.`,
+        });
+      }
 
       fetchInvoices();
     } catch (error: any) {
