@@ -99,7 +99,8 @@ const Invoices = () => {
 
       // Generate invoice number
       const { data: invoiceNumber } = await supabase.rpc(
-        "generate_invoice_number"
+        "generate_invoice_number",
+        { p_merchant_id: session.user.id }
       );
 
       // Create invoice
@@ -290,7 +291,7 @@ const Invoices = () => {
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Description of what was delivered or handled."
+                    placeholder="Services rendered, products delivered, etc."
                     rows={3}
                     className="resize-none"
                   />
@@ -419,7 +420,6 @@ const Invoices = () => {
                         <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         <span className="hidden sm:inline">Preview</span>
                       </Button>
-                      
                       <Button 
                         size="sm" 
                         variant="outline" 
