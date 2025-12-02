@@ -211,62 +211,86 @@ const handlePayment = async () => {
 
     const network = NETWORKS[selectedNetwork];
     
-    // ERC-20 Token ABI (for transfer function)
-    const tokenABI = [
+    // ERC-20 Token ABI (minimal interface for transfer)
+    const ERC20_ABI = [
       "function transfer(address to, uint256 amount) returns (bool)",
       "function balanceOf(address account) view returns (uint256)",
-      "function decimals() view returns (uint8)"
+      "function decimals() view returns (uint8)",
+      "function symbol() view returns (string)"
     ];
 
-    // Create contract instance for the stablecoin
+    // Create contract instance for the stablecoin (USDC on Base or cUSD on Celo)
     const tokenContract = new ethers.Contract(
       network.stablecoin.address,
-      tokenABI,
+      ERC20_ABI,
       signer
     );
 
-    // Parse amount with correct decimals
+    // Format amount with correct decimals
     const tokenAmount = ethers.parseUnits(
-      invoice.amount.toFixed(network.stablecoin.decimals),
+      invoice.amount.toString(),
       network.stablecoin.decimals
     );
 
-    // Check balance
-    const balance = await tokenContract.balanceOf(walletAddress);
-    if (balance < tokenAmount) {
+    console.log("Payment details:", {
+      amount: invoice.amount,
+      tokenAmount: tokenAmount.toString(),
+      decimals: network.stablecoin.decimals,
+      token: network.stablecoin.symbol,
+      to: merchant.wallet_address
+    });
+
+    // Check user's token balance
+    try {
+      const balance = await tokenContract.balanceOf(walletAddress);
+      console.log("Token balance:", ethers.formatUnits(balance, network.stablecoin.decimals));
+      
+      if (balance < tokenAmount) {
+        toast({
+          title: "Insufficient balance",
+          description: `You need at least ${invoice.amount} ${network.stablecoin.symbol} to pay this invoice.`,
+          variant: "destructive",
+        });
+        setPaying(false);
+        return;
+      }
+    } catch (balanceError) {
+      console.error("Balance check failed:", balanceError);
       toast({
-        title: "Insufficient balance",
-        description: `You need ${invoice.amount.toFixed(2)} ${network.stablecoin.symbol}`,
-        variant: "destructive",
+        title: "Warning",
+        description: `Could not verify ${network.stablecoin.symbol} balance. Proceeding anyway...`,
       });
-      setPaying(false);
-      return;
     }
 
     toast({
-      title: "Confirm transaction",
-      description: "Please confirm the transaction in your wallet...",
+      title: "Confirm in wallet",
+      description: `Sending ${invoice.amount} ${network.stablecoin.symbol}...`,
     });
 
-    // Send token transfer transaction
+    // Execute token transfer
     const tx = await tokenContract.transfer(
       merchant.wallet_address,
       tokenAmount
     );
 
     toast({
-      title: "Transaction sent",
-      description: "Waiting for confirmation...",
+      title: "Transaction submitted",
+      description: "Waiting for blockchain confirmation...",
     });
 
+    // Wait for transaction confirmation
     const receipt = await tx.wait();
 
-    if (!receipt) throw new Error("Transaction failed");
+    if (!receipt || receipt.status === 0) {
+      throw new Error("Transaction failed on blockchain");
+    }
+
+    console.log("Transaction successful:", receipt.hash);
 
     const paidAt = new Date().toISOString();
 
-    // Update invoice status
-    await supabase
+    // Update invoice status in database
+    const { error: updateError } = await supabase
       .from("invoices")
       .update({ 
         status: "paid",
@@ -275,6 +299,11 @@ const handlePayment = async () => {
         network: selectedNetwork
       })
       .eq("id", invoiceId);
+
+    if (updateError) {
+      console.error("Database update failed:", updateError);
+      // Don't fail the payment if database update fails
+    }
 
     // Send payment confirmation emails
     try {
@@ -297,9 +326,9 @@ const handlePayment = async () => {
       });
     } catch (emailError) {
       console.error("Email notification failed:", emailError);
-      // Don't fail the payment if email fails
     }
 
+    // Navigate to success page
     navigate("/success", {
       state: {
         amount: invoice.amount,
@@ -311,9 +340,18 @@ const handlePayment = async () => {
 
   } catch (error: any) {
     console.error("Payment error:", error);
+    
+    let errorMessage = "Transaction failed";
+    
+    if (error.code === "ACTION_REJECTED" || error.code === 4001) {
+      errorMessage = "Transaction was rejected";
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     toast({
       title: "Payment failed",
-      description: error.message || "Transaction was rejected or failed",
+      description: errorMessage,
       variant: "destructive",
     });
   } finally {
