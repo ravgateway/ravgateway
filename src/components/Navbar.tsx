@@ -108,7 +108,7 @@ const Navbar = () => {
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center gap-2"
                     onClick={() => setIsOpen(false)}
                   >
-                    <FileText className="w-5 h-5" />
+                    {/*<FileText className="w-5 h-5" />*/}
                     Invoices
                   </Link>
                   <Link 
