@@ -200,7 +200,7 @@ const InvoicePayment = () => {
     }
   };
 
-  const handlePayment = async () => {
+const handlePayment = async () => {
   if (!invoice || !merchant || !walletAddress) return;
 
   setPaying(true);
@@ -210,15 +210,49 @@ const InvoicePayment = () => {
     const signer = await provider.getSigner();
 
     const network = NETWORKS[selectedNetwork];
+    
+    // ERC-20 Token ABI (for transfer function)
+    const tokenABI = [
+      "function transfer(address to, uint256 amount) returns (bool)",
+      "function balanceOf(address account) view returns (uint256)",
+      "function decimals() view returns (uint8)"
+    ];
+
+    // Create contract instance for the stablecoin
+    const tokenContract = new ethers.Contract(
+      network.stablecoin.address,
+      tokenABI,
+      signer
+    );
+
+    // Parse amount with correct decimals
     const tokenAmount = ethers.parseUnits(
       invoice.amount.toFixed(network.stablecoin.decimals),
       network.stablecoin.decimals
     );
 
-    const tx = await signer.sendTransaction({
-      to: merchant.wallet_address,
-      value: tokenAmount,
+    // Check balance
+    const balance = await tokenContract.balanceOf(walletAddress);
+    if (balance < tokenAmount) {
+      toast({
+        title: "Insufficient balance",
+        description: `You need ${invoice.amount.toFixed(2)} ${network.stablecoin.symbol}`,
+        variant: "destructive",
+      });
+      setPaying(false);
+      return;
+    }
+
+    toast({
+      title: "Confirm transaction",
+      description: "Please confirm the transaction in your wallet...",
     });
+
+    // Send token transfer transaction
+    const tx = await tokenContract.transfer(
+      merchant.wallet_address,
+      tokenAmount
+    );
 
     toast({
       title: "Transaction sent",
@@ -276,9 +310,10 @@ const InvoicePayment = () => {
     });
 
   } catch (error: any) {
+    console.error("Payment error:", error);
     toast({
       title: "Payment failed",
-      description: error.message,
+      description: error.message || "Transaction was rejected or failed",
       variant: "destructive",
     });
   } finally {
