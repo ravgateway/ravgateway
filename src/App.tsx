@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
-import Payment from "./pages/Payment";
 import Products from "./pages/Products";
 import CustomerPayment from "./pages/CustomerPayment";
 import Success from "./pages/Success";
@@ -35,7 +34,6 @@ const App = () => (
             <Route path="/setup-profile" element={<SetupProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/payment" element={<Payment />} />
             <Route path="/products" element={<Products />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/invoice/:invoiceId" element={<InvoicePayment />} />
