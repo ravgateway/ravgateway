@@ -53,12 +53,12 @@ const Navbar = () => {
               <Link to="/dashboard" className="text-foreground hover:text-primary transition-colors">
                 Dashboard
               </Link>
-              <Link to="/products" className="text-foreground hover:text-primary transition-colors">
-                Products
-              </Link>
               <Link to="/invoices" className="text-foreground hover:text-primary transition-colors flex items-center gap-1">
                 {/*<FileText className="w-4 h-4" />*/}
                 Invoices
+              </Link>
+              <Link to="/products" className="text-foreground hover:text-primary transition-colors">
+                Products
               </Link>
               <Link to="/payment" className="text-foreground hover:text-primary transition-colors">
                 My QR Code
@@ -97,19 +97,19 @@ const Navbar = () => {
                     Dashboard
                   </Link>
                   <Link 
-                    to="/products" 
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Products
-                  </Link>
-                  <Link 
                     to="/invoices" 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center gap-2"
                     onClick={() => setIsOpen(false)}
                   >
                     {/*<FileText className="w-5 h-5" />*/}
                     Invoices
+                  </Link>
+                  <Link 
+                    to="/products" 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Products
                   </Link>
                   <Link 
                     to="/payment" 

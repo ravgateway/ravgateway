@@ -101,7 +101,7 @@ const InvoicePayment = () => {
 
       setInvoice(invoiceData);
 
-      // Update status to viewed if it's sent
+      // Update status to viewed if it's sent to client
       if (invoiceData.status === "sent") {
         await supabase
           .from("invoices")
