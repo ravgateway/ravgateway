@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import QRCode from "@/components/QRCode";
 import TransactionList, { Transaction } from "@/components/TransactionList";
 import AnalyticsChart from "@/components/AnalyticsChart";
-import { QrCode, Wallet, TrendingUp, FileText, Users, DollarSign, Clock, CheckCircle2 } from "lucide-react";
+import { QrCode, Wallet, TrendingUp, FileText, Users, DollarSign, Clock, CheckCircle2, Copy, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,6 +22,7 @@ interface Invoice {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [userId, setUserId] = useState<string>("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [totalInflow, setTotalInflow] = useState(0);
@@ -72,6 +75,8 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
+
+    setUserId(session.user.id);
 
     const { data: {user} } = await supabase.auth.getUser();
     if (user) {
@@ -252,7 +257,10 @@ const Dashboard = () => {
                 <DollarSign className="w-5 h-5 text-primary" />
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">All-time revenue</p>
+            <p className="text-xs text-green-600 font-medium flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              All-time revenue
+            </p>
           </Card>
 
           {/* Monthly Revenue */}
@@ -270,7 +278,10 @@ const Dashboard = () => {
                 <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
             </div>
-            <p className="text-xs text-muted-foreground">Monthly earnings</p>
+            <p className="text-xs text-green-600 font-medium flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" />
+              Monthly earnings
+            </p>
           </Card>
 
           {/* Pending Invoices */}
@@ -339,14 +350,6 @@ const Dashboard = () => {
             ) : (
               <p className="text-sm text-primary-foreground/70">No sales yet this week</p>
             )}
-            <div className="flex gap-3 mt-6">
-              <Button variant="secondary" className="w-full h-11 sm:h-12" asChild>
-                <Link to="/payment">
-                  <QrCode className="w-4 h-4 mr-2" />
-                  <span className="text-sm sm:text-base">Generate QR</span>
-                </Link>
-              </Button>
-            </div>
           </Card>
 
           {/* Invoice Status Breakdown */}
@@ -395,6 +398,91 @@ const Dashboard = () => {
             </div>
           </Card>
         </div>
+
+        {/* Payment Link & QR Code Section */}
+        <Card className={`p-6 mb-6 sm:mb-8 transition-all duration-400 delay-300 ${
+          cardsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* QR Code */}
+            <div className="flex-shrink-0 flex flex-col items-center lg:items-start">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <QrCode className="w-5 h-5" />
+                Payment Link
+              </h3>
+              <div className="bg-white p-4 rounded-lg border-2 border-muted">
+                <QRCode 
+                  value={`${window.location.origin}/pay/${userId}`}
+                  size={window.innerWidth < 640 ? 160 : 200}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-3 text-center lg:text-left">
+                Scan to pay
+              </p>
+            </div>
+
+            {/* Payment Link Details */}
+            <div className="flex-1 space-y-4">
+              <div>
+                <Label className="text-sm text-muted-foreground mb-2">Your Payment Link</Label>
+                <div className="bg-muted/50 p-3 rounded-lg">
+                  <p className="font-mono text-xs sm:text-sm text-foreground break-all">
+                    {`${window.location.origin}/pay/${userId}`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  className="w-full h-11"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/pay/${userId}`);
+                    toast({
+                      title: "Link copied!",
+                      description: "Payment link copied to clipboard",
+                    });
+                  }}
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Link
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full h-11"
+                  asChild
+                >
+                  <a 
+                    href={`${window.location.origin}/pay/${userId}`}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Preview
+                  </a>
+                </Button>
+              </div>
+
+              <div className="pt-4 border-t">
+                <h4 className="text-sm font-semibold mb-3">Quick Actions</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" className="h-11" asChild>
+                    <Link to="/products">
+                      <FileText className="w-4 h-4 mr-2" />
+                      Products
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="h-11" asChild>
+                    <Link to="/invoices">
+                      <FileText className="w-4 h-4 mr-2" />
+                      Invoices
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
 
         {/* Chart + Top Clients */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
