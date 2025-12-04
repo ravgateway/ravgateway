@@ -60,6 +60,9 @@ const Navbar = () => {
               <Link to="/products" className="text-foreground hover:text-primary transition-colors">
                 Products
               </Link>
+              <Link to="/settings" className="text-foreground hover:text-primary transition-colors">
+                Settings
+              </Link>
               <Link to="/payment" className="text-foreground hover:text-primary transition-colors">
                 My QR Code
               </Link>
@@ -118,6 +121,12 @@ const Navbar = () => {
                   >
                     My QR Code
                   </Link>
+                  <Link 
+                    to="/settings" 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Products
                   <Button 
                     variant="outline" 
                     onClick={() => {

@@ -17,6 +17,7 @@ import Invoices from "./pages/Invoices";
 import InvoicePayment from "./pages/InvoicePayment";
 import InvoicePreview from "./pages/InvoicePreview";
 import Admin from "./pages/Admin";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/setup-profile" element={<SetupProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/products" element={<Products />} />
             <Route path="/invoices" element={<Invoices />} />
