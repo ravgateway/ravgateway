@@ -295,13 +295,13 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-6 sm:py-8 flex-1">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-start mb-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-              <p className="text-muted-foreground">Platform-wide analytics and statistics</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">Admin Dashboard</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Platform-wide analytics</p>
             </div>
-            <Badge variant="destructive" className="text-sm">
+            <Badge variant="destructive" className="text-xs sm:text-sm w-fit">
               <Activity className="w-3 h-3 mr-1" />
               Admin Access
             </Badge>
@@ -309,45 +309,50 @@ const Admin = () => {
 
           {/* Date Filters & Actions */}
           <Card className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <Label htmlFor="startDate" className="text-xs mb-1">Start Date</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="h-9"
-                />
+            <div className="flex flex-col gap-4">
+              {/* Date inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="startDate" className="text-xs mb-1">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="h-10 w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endDate" className="text-xs mb-1">End Date</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="h-10 w-full"
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="endDate" className="text-xs mb-1">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="h-9"
-                />
-              </div>
-              <div className="flex items-end gap-2">
-                <Button onClick={handleApplyFilters} size="sm" className="flex-1">
-                  Apply Filters
+              
+              {/* Action buttons */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <Button onClick={handleApplyFilters} size="sm" className="w-full">
+                  Apply
                 </Button>
                 {(startDate || endDate) && (
-                  <Button onClick={handleClearFilters} size="sm" variant="outline">
+                  <Button onClick={handleClearFilters} size="sm" variant="outline" className="w-full">
                     Clear
                   </Button>
                 )}
-              </div>
-              <div className="flex items-end gap-2">
-                <Button onClick={handleRefresh} size="sm" variant="outline" disabled={refreshing}>
+                <Button onClick={handleRefresh} size="sm" variant="outline" disabled={refreshing} className="w-full">
                   <RefreshCw className={`w-4 h-4 mr-1 ${refreshing ? 'animate-spin' : ''}`} />
-                  Refresh
+                  <span className="hidden sm:inline">Refresh</span>
+                  <span className="sm:hidden">↻</span>
                 </Button>
-                <Button onClick={handleExportCSV} size="sm" variant="outline">
+                <Button onClick={handleExportCSV} size="sm" variant="outline" className="w-full">
                   <Download className="w-4 h-4 mr-1" />
-                  CSV
+                  <span className="hidden sm:inline">CSV</span>
+                  <span className="sm:hidden">⬇</span>
                 </Button>
               </div>
             </div>
@@ -355,90 +360,131 @@ const Admin = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {/* Total Volume */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-muted-foreground">Total Volume</p>
-              <DollarSign className="w-5 h-5 text-primary" />
+              <p className="text-xs sm:text-sm text-muted-foreground">Total Volume</p>
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
-            <p className="text-3xl font-bold text-foreground">
-              ${stats.totalVolume.toFixed(2)}
+            <p className="text-xl sm:text-3xl font-bold text-foreground">
+              ${stats.totalVolume.toFixed(0)}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              All-time processed
+            <p className="text-xs text-muted-foreground mt-1 sm:mt-2">
+              All-time
             </p>
           </Card>
 
           {/* Total Transactions */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-muted-foreground">Transactions</p>
-              <Receipt className="w-5 h-5 text-blue-500" />
+              <p className="text-xs sm:text-sm text-muted-foreground">Transactions</p>
+              <Receipt className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
             </div>
-            <p className="text-3xl font-bold text-foreground">
+            <p className="text-xl sm:text-3xl font-bold text-foreground">
               {stats.totalTransactions}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Completed payments
+            <p className="text-xs text-muted-foreground mt-1 sm:mt-2">
+              Completed
             </p>
           </Card>
 
           {/* Platform Fees */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-muted-foreground">Platform Fees</p>
-              <TrendingUp className="w-5 h-5 text-green-500" />
+              <p className="text-xs sm:text-sm text-muted-foreground">Fees</p>
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
             </div>
-            <p className="text-3xl font-bold text-foreground">
-              ${stats.totalFees.toFixed(2)}
+            <p className="text-xl sm:text-3xl font-bold text-foreground">
+              ${stats.totalFees.toFixed(0)}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              1.5% of volume
+            <p className="text-xs text-muted-foreground mt-1 sm:mt-2">
+              1.5% earned
             </p>
           </Card>
 
           {/* Active Merchants */}
-          <Card className="p-6">
+          <Card className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-muted-foreground">Merchants</p>
-              <Users className="w-5 h-5 text-purple-500" />
+              <p className="text-xs sm:text-sm text-muted-foreground">Merchants</p>
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
             </div>
-            <p className="text-3xl font-bold text-foreground">
+            <p className="text-xl sm:text-3xl font-bold text-foreground">
               {stats.activeMerchants}
             </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Registered users
+            <p className="text-xs text-muted-foreground mt-1 sm:mt-2">
+              Active
             </p>
           </Card>
         </div>
 
         {/* Time Period Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="p-6">
-            <p className="text-sm text-muted-foreground mb-2">Today</p>
-            <p className="text-2xl font-bold text-primary">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <Card className="p-4 sm:p-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2">Today</p>
+            <p className="text-xl sm:text-2xl font-bold text-primary">
               ${stats.todayVolume.toFixed(2)}
             </p>
           </Card>
-          <Card className="p-6">
-            <p className="text-sm text-muted-foreground mb-2">This Week</p>
-            <p className="text-2xl font-bold text-primary">
+          <Card className="p-4 sm:p-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2">This Week</p>
+            <p className="text-xl sm:text-2xl font-bold text-primary">
               ${stats.weekVolume.toFixed(2)}
             </p>
           </Card>
-          <Card className="p-6">
-            <p className="text-sm text-muted-foreground mb-2">This Month</p>
-            <p className="text-2xl font-bold text-primary">
+          <Card className="p-4 sm:p-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-2">This Month</p>
+            <p className="text-xl sm:text-2xl font-bold text-primary">
               ${stats.monthVolume.toFixed(2)}
             </p>
           </Card>
         </div>
 
         {/* Top Merchants Table */}
-        <Card className="p-6 mb-8">
+        <Card className="p-4 sm:p-6 mb-8">
           <h3 className="text-lg font-semibold mb-4">Top 10 Merchants</h3>
-          <div className="overflow-x-auto">
+          
+          {/* Mobile: Card view */}
+          <div className="block sm:hidden space-y-3">
+            {topMerchants.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground text-sm">
+                No merchant data available
+              </p>
+            ) : (
+              topMerchants.map((merchant, index) => (
+                <Card key={merchant.id} className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <Badge variant="secondary" className="text-lg font-bold">
+                        #{index + 1}
+                      </Badge>
+                      <div>
+                        <p className="font-semibold text-sm">{merchant.merchant_name}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[180px]">
+                          {merchant.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Volume</p>
+                      <p className="text-lg font-bold text-primary">
+                        ${merchant.total_volume.toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Transactions</p>
+                      <p className="text-lg font-semibold">{merchant.transaction_count}</p>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            )}
+          </div>
+
+          {/* Desktop: Table view */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b">
@@ -475,17 +521,17 @@ const Admin = () => {
         </Card>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
           {/* Volume Chart */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Volume Trend (30 Days)</h3>
-            <ResponsiveContainer width="100%" height={300}>
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Volume Trend (30 Days)</h3>
+            <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" fontSize={12} />
-                <YAxis fontSize={12} />
+                <XAxis dataKey="date" fontSize={10} angle={-45} textAnchor="end" height={60} />
+                <YAxis fontSize={10} />
                 <Tooltip />
-                <Legend />
+                <Legend wrapperStyle={{ fontSize: '12px' }} />
                 <Line 
                   type="monotone" 
                   dataKey="volume" 
@@ -498,15 +544,15 @@ const Admin = () => {
           </Card>
 
           {/* Transaction Count Chart */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Transactions (30 Days)</h3>
-            <ResponsiveContainer width="100%" height={300}>
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Transactions (30 Days)</h3>
+            <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" fontSize={12} />
-                <YAxis fontSize={12} />
+                <XAxis dataKey="date" fontSize={10} angle={-45} textAnchor="end" height={60} />
+                <YAxis fontSize={10} />
                 <Tooltip />
-                <Legend />
+                <Legend wrapperStyle={{ fontSize: '12px' }} />
                 <Bar 
                   dataKey="transactions" 
                   fill="#10b981"
