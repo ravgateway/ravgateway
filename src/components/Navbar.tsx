@@ -63,9 +63,6 @@ const Navbar = () => {
               <Link to="/settings" className="text-foreground hover:text-primary transition-colors">
                 Settings
               </Link>
-              <Link to="/payment" className="text-foreground hover:text-primary transition-colors">
-                My QR Code
-              </Link>
               <div className="flex justify-start py-2">
                 <ThemeToggle/>
               </div>
@@ -122,13 +119,12 @@ const Navbar = () => {
                     Products
                   </Link>
                   <Link 
-                    to="/payment" 
+                    to="/settings" 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
                     onClick={() => setIsOpen(false)}
                   >
-                    My QR Code
-                  </Link>
-                  
+                    Settings
+                  </Link>                  
                   <Button 
                     variant="outline" 
                     onClick={() => {
