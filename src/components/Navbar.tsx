@@ -115,18 +115,20 @@ const Navbar = () => {
                     Products
                   </Link>
                   <Link 
+                    to="/products" 
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Products
+                  </Link>
+                  <Link 
                     to="/payment" 
                     className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
                     onClick={() => setIsOpen(false)}
                   >
                     My QR Code
                   </Link>
-                  <Link 
-                    to="/settings" 
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors py-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Products
+                  
                   <Button 
                     variant="outline" 
                     onClick={() => {
