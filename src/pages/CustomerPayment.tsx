@@ -515,17 +515,17 @@ const CustomerPayment = () => {
           {/* Security Badge */}
           <div className="flex items-center justify-center gap-2 mb-4">
             {isMerchantVerified ? (
-              <Badge variant="outline" className="bg-green-500/10 text-green-700 border-green-200">
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                 <CheckCircle2 className="w-3 h-3 mr-1" />
                 Verified Merchant
               </Badge>
             ) : (
-              <Badge variant="outline" className="bg-yellow-500/10 text-yellow-700 border-yellow-200">
+              <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
                 <AlertTriangle className="w-3 h-3 mr-1" />
                 Unverified Merchant
               </Badge>
             )}
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
               <Shield className="w-3 h-3 mr-1" />
               Secure Payment
             </Badge>
@@ -546,7 +546,7 @@ const CustomerPayment = () => {
           </div>
 
           {/* Security Alert */}
-          <Alert className="mb-6 border-blue-200 bg-blue-50/50">
+          <Alert className="mb-6 border-blue-200 bg-blue-50">
             <Shield className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-sm text-blue-800">
               <strong>Security Tips:</strong> Always verify the merchant name and wallet address before payment. Transactions on the blockchain cannot be reversed.
