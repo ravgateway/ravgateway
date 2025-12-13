@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { getErrorMessage } from "@/lib/errorHandler";
+import { Link } from "react-router-dom";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -232,6 +233,11 @@ const Auth = () => {
                     required
                   />
                 </div>
+                <div className="text-center text-sm">
+                  <Link to="/forgot-password" className="text-primary hover:underline">
+                      Forgot your password?
+                  </Link>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading || googleLoading}>
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
@@ -326,6 +332,13 @@ const Auth = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+                  <div className="text-right">
+                    <Link to="/forgot-password"
+                    className="text-sm text-primary hover:underline"
+                    >
+                      Forgot password
+                    </Link>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading || googleLoading}>
                   {loading ? "Creating account..." : "Create Account"}
