@@ -104,7 +104,7 @@ export default function ForgotPassword() {
             {/* Back to Login */}
             <div className="text-center">
               <Link
-                to="/login"
+                to="/auth"
                 className="text-sm text-primary hover:underline inline-flex items-center gap-1"
               >
                 <ArrowLeft className="h-3 w-3" />

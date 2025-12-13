@@ -7,10 +7,10 @@ const Footer = () => {
   // Update these with your actual social media URLs
   const socialLinks = {
     facebook: "https://facebook.com/ravgateway",
-    twitter: "https://twitter.com/ravgateway",
+    twitter: "https://x.com/RAVGateway",
     instagram: "https://instagram.com/ravgateway",
     linkedin: "https://linkedin.com/company/ravgateway",
-    email: "mailto:support@ravgateway.com"
+    email: "mailto:ravgateway@gmail.com"
   };
   
   return (
