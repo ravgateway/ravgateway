@@ -17,6 +17,8 @@ import InvoicePayment from "./pages/InvoicePayment";
 import InvoicePreview from "./pages/InvoicePreview";
 import Admin from "./pages/Admin";
 import Settings from "./pages/Settings";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/setup-profile" element={<SetupProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
