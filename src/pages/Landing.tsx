@@ -17,7 +17,7 @@ const Landing = () => {
             Reliable Access via Blockchain
           </h1>
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
-            We help small merchants across Africa accept stable coin payments easily, no POS, no complexity, just scan & get paid
+            Pay, receive, and settle in stablecoins instantly with simple, clear flows and zero hidden steps. All powered by RAV GATEWAY, a cross-chain gateway that connects users and merchants worldwide.
           </p>
           <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 h-auto" asChild>
             <Link to="/dashboard">Get Started</Link>
