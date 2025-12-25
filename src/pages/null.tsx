@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,6 @@ interface MerchantProfile {
   email: string;
   merchant_name: string;
 }
-
 // Network configuration with stablecoin support - MAINNET
 const NETWORKS = {
   celo: {
@@ -52,28 +51,6 @@ const NETWORKS = {
       decimals: 6,
     },
   },
-  lisk: {
-    name: "Lisk Mainnet",
-    chainId: "0x46f", // 1135 in decimal
-    rpcUrl: "https://rpc.api.lisk.com",
-    explorer: "https://blockscout.lisk.com",
-    stablecoin: {
-      address: "0x05D032ac25d322df992303dCa074EE7392C117b9", // USDT on Lisk
-      symbol: "USDT",
-      decimals: 6,
-    },
-  },
-  somnia: {
-    name: "Somnia Devnet",
-    chainId: "0x32c9", // 13001 in decimal (devnet)
-    rpcUrl: "https://dream-rpc.somnia.network",
-    explorer: "https://explorer-devnet.somnia.network",
-    stablecoin: {
-      address: "0x", // TODO: Add Somnia USDC address when mainnet launches
-      symbol: "USDC",
-      decimals: 6,
-    },
-  },
 };
 
 // ERC20 ABI for token transfers
@@ -83,6 +60,7 @@ const ERC20_ABI = [
   "function decimals() view returns (uint8)",
   "function symbol() view returns (string)",
 ];
+
 
 // Validation schema for payment inputs
 const paymentSchema = z.object({
@@ -102,7 +80,6 @@ const paymentSchema = z.object({
 
 const CustomerPayment = () => {
   const { merchantId } = useParams();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
@@ -118,9 +95,10 @@ const CustomerPayment = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [walletProvider, setWalletProvider] = useState<any>(null);
   const [showNetworkOptions, setShowNetworkOptions] = useState(false);
-  const [selectedNetwork, setSelectedNetwork] = useState<"celo" | "base" | "lisk" | "somnia">("base");
+  const [selectedNetwork, setSelectedNetwork] = useState<"celo" | "base">("celo");
   const [showNetworkSelect, setShowNetworkSelect] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
+
 
   useEffect(() => {
     const fetchMerchantData = async () => {
@@ -208,43 +186,22 @@ const CustomerPayment = () => {
         });
       } else {
         setProducts(productsData || []);
-        
-        // Silently pre-select product from URL if provided
-        const productIdFromUrl = searchParams.get("product");
-        if (productIdFromUrl && productsData) {
-          const productExists = productsData.find(p => p.id === productIdFromUrl);
-          if (productExists) {
-            setSelectedProduct(productIdFromUrl);
-            // No toast - just silently select it for better UX
-          }
-        }
       }
       setLoadingData(false);
     };
 
     fetchMerchantData();
-  }, [merchantId, searchParams, toast]);
+  }, [merchantId, toast]);
 
   const connectWallet = async (
     useWalletConnect: boolean = false,
-    network: "celo" | "base" | "lisk" | "somnia" = "base"
+    network: "celo" | "base" = "celo"
   ) => {
     setIsConnecting(true);
     try {
       let provider;
       let accounts;
       const selectedNet = NETWORKS[network];
-      
-      // Check if Somnia is selected (not yet available on mainnet)
-      if (network === "somnia") {
-        toast({
-          title: "Network not ready",
-          description: "Somnia network will be available soon. Please select another network.",
-          variant: "destructive",
-        });
-        setIsConnecting(false);
-        return;
-      }
       
       if (useWalletConnect) {
         // WalletConnect integration for mobile wallets      
@@ -636,7 +593,7 @@ const CustomerPayment = () => {
                         className="w-full"
                         variant="outline"
                       >
-                        Base (USDC)
+                        {isConnecting ? "Connecting..." : "Base (MetaMask)"}
                       </Button>
 
                       <Button 
@@ -648,31 +605,7 @@ const CustomerPayment = () => {
                         className="w-full"
                         variant="outline"
                       >
-                        Celo (cUSD)
-                      </Button>
-
-                      <Button 
-                        onClick={() => {
-                          connectWallet(false, "lisk");
-                          setShowNetworkOptions(false);
-                        }}
-                        disabled={isConnecting}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Lisk (USDT)
-                      </Button>
-
-                      <Button 
-                        onClick={() => {
-                          connectWallet(false, "somnia");
-                          setShowNetworkOptions(false);
-                        }}
-                        disabled={isConnecting}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Somnia (Coming Soon)
+                        {isConnecting ? "Connecting..." : "Celo (MetaMask)"}
                       </Button>
                     </div>
                   )}
@@ -707,9 +640,6 @@ const CustomerPayment = () => {
                     <p className="text-xs text-muted-foreground">Connected Wallet</p>
                     <p className="text-sm font-medium text-foreground">
                       {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Network: {NETWORKS[selectedNetwork].name}
                     </p>
                   </div>
                   <Button
