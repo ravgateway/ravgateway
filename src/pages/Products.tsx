@@ -51,6 +51,7 @@ const Products = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
+  const [userId, setUserId] = useState<string>(""); // Add userId state
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,6 +82,9 @@ const Products = () => {
   const fetchProducts = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
+
+    // Set userId for sharing
+    setUserId(session.user.id);
 
     const { data, error } = await supabase
       .from("products")
@@ -213,8 +217,8 @@ const Products = () => {
 
   // Share functionality
   const handleShare = async (product: Product, platform: string) => {
-    // TODO: Replace with your actual product page URL structure
-    const productUrl = `https://ravgateway.com/product/${product.id}`;
+    // Share your payment link with product pre-selected
+    const productUrl = `https://ravgateway.com/pay/${userId}?product=${product.id}`;
     const shareText = `Check out ${product.name} - $${product.price.toFixed(2)}`;
     const fullText = product.description
       ? `${shareText}\n\n${product.description}`

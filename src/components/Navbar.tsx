@@ -63,9 +63,9 @@ const Navbar = () => {
               <Link to="/settings" className="text-foreground hover:text-primary transition-colors">
                 Settings
               </Link>
-              <div className="flex justify-start py-2">
+              {/*<div className="flex justify-start py-2">
                 <ThemeToggle/>
-              </div>
+              </div>*/}
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
@@ -132,9 +132,9 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                <div className="flex justify-start py-2">
+                {/*<div className="flex justify-start py-2">
                   <ThemeToggle/>
-                </div>
+                </div>*/}
                 <Button asChild className="h-12">
                   <Link to="/auth" onClick={() => setIsOpen(false)}>Login</Link>
                 </Button>
