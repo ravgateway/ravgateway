@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Save, Upload, X, Sun, Moon, Monitor, Wallet, LogOut } from "lucide-react";
+import { Save, Upload, X, Sun, Moon, Monitor, Wallet, LogOut, CheckCircle2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getErrorMessage } from "@/lib/errorHandler";
@@ -21,6 +21,8 @@ const Settings = () => {
   const [merchantName, setMerchantName] = useState("");
   const [email, setEmail] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [originalWalletAddress, setOriginalWalletAddress] = useState(""); // Track original value
+  const [walletValid, setWalletValid] = useState<boolean | null>(null); // null = not validated yet
   
   // Preferences state
   const [defaultChain, setDefaultChain] = useState("base");
@@ -40,6 +42,18 @@ const Settings = () => {
   useEffect(() => {
     loadSettings();
   }, []);
+
+  // Real-time wallet validation
+  useEffect(() => {
+    if (walletAddress === "") {
+      setWalletValid(null);
+      return;
+    }
+
+    // Validate Ethereum address format (0x + 40 hex characters)
+    const isValid = /^0x[a-fA-F0-9]{40}$/.test(walletAddress);
+    setWalletValid(isValid);
+  }, [walletAddress]);
 
   const loadSettings = async () => {
     try {
@@ -70,6 +84,7 @@ const Settings = () => {
       if (profile) {
         setMerchantName(profile.merchant_name || "");
         setWalletAddress(profile.wallet_address || "");
+        setOriginalWalletAddress(profile.wallet_address || ""); // Store original
         setDefaultChain(profile.default_chain || "base");
         setDefaultStablecoin(profile.default_stablecoin || "usdc");
         setTheme(profile.theme || "system");
@@ -179,7 +194,7 @@ const Settings = () => {
 
   const handleSaveSettings = async () => {
     // Validate wallet address
-    if (walletAddress && !/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
+    if (walletAddress && !walletValid) {
       toast({
         title: "Invalid wallet address",
         description: "Please enter a valid Ethereum address (0x...)",
@@ -202,6 +217,9 @@ const Settings = () => {
         .eq("id", userId);
 
       if (error) throw error;
+
+      // Update original wallet address after successful save
+      setOriginalWalletAddress(walletAddress);
 
       // Apply theme
       applyTheme(theme);
@@ -236,6 +254,9 @@ const Settings = () => {
     await supabase.auth.signOut();
     navigate("/auth");
   };
+
+  // Check if wallet has unsaved changes
+  const walletHasChanges = walletAddress !== originalWalletAddress;
 
   if (loading) {
     return (
@@ -337,22 +358,71 @@ const Settings = () => {
                   </p>
                 </div>
 
-                {/* Wallet Address */}
+                {/* Wallet Address with Real-time Validation */}
                 <div>
                   <Label htmlFor="walletAddress" className="text-sm">
                     <Wallet className="w-4 h-4 inline mr-1" />
                     Wallet Address
                   </Label>
-                  <Input
-                    id="walletAddress"
-                    value={walletAddress}
-                    onChange={(e) => setWalletAddress(e.target.value)}
-                    placeholder="0x..."
-                    className="h-11 mt-1.5 font-mono text-sm"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Customers send payments to this address
-                  </p>
+                  <div className="relative">
+                    <Input
+                      id="walletAddress"
+                      value={walletAddress}
+                      onChange={(e) => setWalletAddress(e.target.value)}
+                      placeholder="0x..."
+                      className={`h-11 mt-1.5 font-mono text-sm pr-10 ${
+                        walletValid === true ? 'border-green-500 focus-visible:ring-green-500' : 
+                        walletValid === false ? 'border-red-500 focus-visible:ring-red-500' : ''
+                      }`}
+                    />
+                    {/* Real-time validation indicator */}
+                    {walletAddress && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 mt-0.75">
+                        {walletValid ? (
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                        ) : (
+                          <AlertCircle className="w-5 h-5 text-red-600" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Status messages */}
+                  {walletAddress && (
+                    <div className="mt-2 space-y-1">
+                      {walletValid ? (
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Valid Ethereum address
+                        </p>
+                      ) : (
+                        <p className="text-xs text-red-600 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          Invalid format. Must be 0x followed by 40 hex characters
+                        </p>
+                      )}
+                      
+                      {/* Unsaved changes indicator */}
+                      {walletHasChanges && walletValid && (
+                        <p className="text-xs text-orange-600 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          You have unsaved changes
+                        </p>
+                      )}
+                      
+                      {!walletHasChanges && walletValid && originalWalletAddress && (
+                        <p className="text-xs text-muted-foreground">
+                          Customers send payments to this address
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  
+                  {!walletAddress && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Enter your Ethereum wallet address to receive payments
+                    </p>
+                  )}
                 </div>
               </div>
             </Card>
@@ -370,10 +440,9 @@ const Settings = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="celo">Celo</SelectItem>
                       <SelectItem value="base">Base</SelectItem>
-                      <SelectItem value="lisk">Lisk</SelectItem>
-                      <SelectItem value="somnia">Somnia</SelectItem>
+                      <SelectItem value="celo">Celo</SelectItem>
+                      <SelectItem value="solana">Solana (Coming Soon)</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -390,7 +459,7 @@ const Settings = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="usdc">USDC</SelectItem>
-                      <SelectItem value="usdt">USDT</SelectItem>
+                      {/*<SelectItem value="usdt">USDT</SelectItem>*/}
                       <SelectItem value="cusd">cUSD (Celo only)</SelectItem>
                     </SelectContent>
                   </Select>
@@ -439,7 +508,7 @@ const Settings = () => {
             {/* Save Button */}
             <Button
               onClick={handleSaveSettings}
-              disabled={saving}
+              disabled={saving || (walletAddress && !walletValid)}
               className="w-full h-12 text-base"
             >
               {saving ? (

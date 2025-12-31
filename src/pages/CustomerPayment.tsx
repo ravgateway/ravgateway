@@ -52,28 +52,39 @@ const NETWORKS = {
       decimals: 6,
     },
   },
-  lisk: {
-    name: "Lisk Mainnet",
-    chainId: "0x46f", // 1135 in decimal
-    rpcUrl: "https://rpc.api.lisk.com",
-    explorer: "https://blockscout.lisk.com",
+  solana: {
+    name: "Solana Mainnet",
+    chainId: "0x65", // Not used for Solana (different architecture)
+    rpcUrl: "https://api.mainnet-beta.solana.com",
+    explorer: "https://explorer.solana.com",
     stablecoin: {
-      address: "0x05D032ac25d322df992303dCa074EE7392C117b9", // USDT on Lisk
-      symbol: "USDT",
-      decimals: 6,
-    },
-  },
-  somnia: {
-    name: "Somnia Devnet",
-    chainId: "0x32c9", // 13001 in decimal (devnet)
-    rpcUrl: "https://dream-rpc.somnia.network",
-    explorer: "https://explorer-devnet.somnia.network",
-    stablecoin: {
-      address: "0x", // TODO: Add Somnia USDC address when mainnet launches
+      address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC on Solana
       symbol: "USDC",
       decimals: 6,
     },
   },
+  // lisk: {
+  //   name: "Lisk Mainnet",
+  //   chainId: "0x46f", // 1135 in decimal
+  //   rpcUrl: "https://rpc.api.lisk.com",
+  //   explorer: "https://blockscout.lisk.com",
+  //   stablecoin: {
+  //     address: "0x05D032ac25d322df992303dCa074EE7392C117b9", // USDT on Lisk
+  //     symbol: "USDT",
+  //     decimals: 6,
+  //   },
+  // },
+  // somnia: {
+  //   name: "Somnia Devnet",
+  //   chainId: "0x32c9", // 13001 in decimal (devnet)
+  //   rpcUrl: "https://dream-rpc.somnia.network",
+  //   explorer: "https://explorer-devnet.somnia.network",
+  //   stablecoin: {
+  //     address: "0x", // TODO: Add Somnia USDC address when mainnet launches
+  //     symbol: "USDC",
+  //     decimals: 6,
+  //   },
+  // },
 };
 
 // ERC20 ABI for token transfers
@@ -118,7 +129,7 @@ const CustomerPayment = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [walletProvider, setWalletProvider] = useState<any>(null);
   const [showNetworkOptions, setShowNetworkOptions] = useState(false);
-  const [selectedNetwork, setSelectedNetwork] = useState<"celo" | "base" | "lisk" | "somnia">("base");
+  const [selectedNetwork, setSelectedNetwork] = useState<"celo" | "base" | "solana">("base");
   const [showNetworkSelect, setShowNetworkSelect] = useState(false);
   const [customerEmail, setCustomerEmail] = useState("");
 
@@ -227,7 +238,7 @@ const CustomerPayment = () => {
 
   const connectWallet = async (
     useWalletConnect: boolean = false,
-    network: "celo" | "base" | "lisk" | "somnia" = "base"
+    network: "celo" | "base" | "solana" = "base"
   ) => {
     setIsConnecting(true);
     try {
@@ -235,12 +246,11 @@ const CustomerPayment = () => {
       let accounts;
       const selectedNet = NETWORKS[network];
       
-      // Check if Somnia is selected (not yet available on mainnet)
-      if (network === "somnia") {
+      // Block Solana for now - needs different implementation
+      if (network === "solana") {
         toast({
-          title: "Network not ready",
-          description: "Somnia network will be available soon. Please select another network.",
-          variant: "destructive",
+          title: "Coming Soon!",
+          description: "Solana payments launching Q1 2026. For now, please use Base or Celo.",
         });
         setIsConnecting(false);
         return;
@@ -653,26 +663,14 @@ const CustomerPayment = () => {
 
                       <Button 
                         onClick={() => {
-                          connectWallet(false, "lisk");
+                          connectWallet(false, "solana");
                           setShowNetworkOptions(false);
                         }}
                         disabled={isConnecting}
                         className="w-full"
                         variant="outline"
                       >
-                        Lisk (USDT)
-                      </Button>
-
-                      <Button 
-                        onClick={() => {
-                          connectWallet(false, "somnia");
-                          setShowNetworkOptions(false);
-                        }}
-                        disabled={isConnecting}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Somnia (Coming Soon)
+                        Solana (USDC)
                       </Button>
                     </div>
                   )}
