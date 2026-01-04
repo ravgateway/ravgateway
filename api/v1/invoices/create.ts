@@ -71,43 +71,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Parse request body
-  const { customer_email, items, currency = 'USDC', blockchain = 'Base' } = req.body;
+  const { 
+    client_name, 
+    client_email, 
+    items, 
+    description,
+    network = 'Base',
+    due_days = 7 
+  } = req.body;
 
   // Validate input
-  if (!customer_email || !items || !Array.isArray(items) || items.length === 0) {
+  if (!client_email || !items || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ 
-      error: 'Invalid request. Required: customer_email, items (array)' 
+      error: 'Invalid request. Required: client_email, items (array)' 
     });
   }
 
-  // Calculate total
-  const total = items.reduce((sum: number, item: any) => {
+  // Calculate total amount
+  const amount = items.reduce((sum: number, item: any) => {
     return sum + (item.price * item.quantity);
   }, 0);
 
-  // Generate invoice ID
+  // Generate invoice number
   const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+  // Calculate dates
+  const issueDate = new Date();
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + due_days);
 
   // Create invoice in database
   const { data: invoice, error } = await supabase
     .from('invoices')
     .insert({
-      profile_id: auth.profile_id,
+      merchant_id: auth.profile_id,
       invoice_number: invoiceNumber,
-      customer_email,
+      client_name: client_name || null,
+      client_email,
       items,
-      currency,
-      blockchain,
-      total_amount: total,
+      description: description || null,
+      amount,
+      network,
       status: 'pending',
-      created_at: new Date().toISOString()
+      issue_date: issueDate.toISOString(),
+      due_date: dueDate.toISOString(),
+      reminder_count: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     })
     .select()
     .single();
 
   if (error) {
     console.error('Database error:', error);
-    return res.status(500).json({ error: 'Failed to create invoice' });
+    return res.status(500).json({ error: 'Failed to create invoice', details: error.message });
   }
 
   // Return invoice details
@@ -115,11 +132,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     invoice_id: invoice.id,
     invoice_number: invoice.invoice_number,
     payment_url: `${process.env.VITE_APP_URL || 'https://ravgateway.vercel.app'}/pay/${invoice.id}`,
-    customer_email: invoice.customer_email,
-    total_amount: invoice.total_amount,
-    currency: invoice.currency,
-    blockchain: invoice.blockchain,
+    client_email: invoice.client_email,
+    client_name: invoice.client_name,
+    amount: invoice.amount,
+    network: invoice.network,
     status: invoice.status,
+    issue_date: invoice.issue_date,
+    due_date: invoice.due_date,
     created_at: invoice.created_at
   });
 }

@@ -76,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     .from('invoices')
     .select('*')
     .eq('id', invoiceId)
-    .eq('profile_id', auth.profile_id) // Ensure user owns this invoice
+    .eq('merchant_id', auth.profile_id) // Ensure user owns this invoice
     .single();
 
   if (error || !invoice) {
@@ -87,14 +87,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   return res.status(200).json({
     invoice_id: invoice.id,
     invoice_number: invoice.invoice_number,
-    customer_email: invoice.customer_email,
+    client_name: invoice.client_name,
+    client_email: invoice.client_email,
     items: invoice.items,
-    total_amount: invoice.total_amount,
-    currency: invoice.currency,
-    blockchain: invoice.blockchain,
+    description: invoice.description,
+    amount: invoice.amount,
+    network: invoice.network,
     status: invoice.status,
     payment_url: `${process.env.VITE_APP_URL || 'https://ravgateway.vercel.app'}/pay/${invoice.id}`,
-    transaction_hash: invoice.transaction_hash,
+    tx_hash: invoice.tx_hash,
+    issue_date: invoice.issue_date,
+    due_date: invoice.due_date,
     paid_at: invoice.paid_at,
     created_at: invoice.created_at
   });

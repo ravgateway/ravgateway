@@ -76,7 +76,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let query = supabase
     .from('invoices')
     .select('*')
-    .eq('profile_id', auth.profile_id)
+    .eq('merchant_id', auth.profile_id)
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -96,13 +96,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     invoices: invoices.map(inv => ({
       invoice_id: inv.id,
       invoice_number: inv.invoice_number,
-      customer_email: inv.customer_email,
-      total_amount: inv.total_amount,
-      currency: inv.currency,
-      blockchain: inv.blockchain,
+      client_name: inv.client_name,
+      client_email: inv.client_email,
+      amount: inv.amount,
+      network: inv.network,
       status: inv.status,
-      created_at: inv.created_at,
-      paid_at: inv.paid_at
+      issue_date: inv.issue_date,
+      due_date: inv.due_date,
+      paid_at: inv.paid_at,
+      created_at: inv.created_at
     })),
     count: invoices.length
   });
