@@ -18,6 +18,7 @@ import Admin from "./pages/Admin";
 import Settings from "./pages/Settings";
 import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
+import ApiKeys from "./pages/ApiKeys";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/invoice-preview/:invoiceId" element={<InvoicePreview />} />
             <Route path="/pay/:merchantId" element={<CustomerPayment />} />
             <Route path="/success" element={<Success />} />
+            <Route path="/apikeys" element={<ApiKeys />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
