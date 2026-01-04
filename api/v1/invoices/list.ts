@@ -81,7 +81,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     .limit(limit);
 
   // Filter by status if provided
-  if (status && ['pending', 'paid', 'expired'].includes(status)) {
+if (status && ['draft', 'sent', 'viewed', 'paid', 'overdue'].includes(status)) {
     query = query.eq('status', status);
   }
 
