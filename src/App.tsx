@@ -11,7 +11,6 @@ import CustomerPayment from "./pages/CustomerPayment";
 import Success from "./pages/Success";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import SetupProfile from "./pages/SetupProfile";
 import Invoices from "./pages/Invoices";
 import InvoicePayment from "./pages/InvoicePayment";
 import InvoicePreview from "./pages/InvoicePreview";
@@ -35,7 +34,6 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
-            <Route path="/setup-profile" element={<SetupProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/products" element={<Products />} />
