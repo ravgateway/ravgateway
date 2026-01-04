@@ -68,15 +68,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Invalid or rate-limited API key' });
   }
 
-  // Get invoice ID from URL
+  // Get invoice ID from query parameter
   const invoiceId = req.query.id as string;
+  
+  if (!invoiceId) {
+    return res.status(400).json({ error: 'Invoice ID required as query parameter (?id=xxx)' });
+  }
 
   // Fetch invoice
   const { data: invoice, error } = await supabase
     .from('invoices')
     .select('*')
     .eq('id', invoiceId)
-    .eq('merchant_id', auth.profile_id) // Ensure user owns this invoice
+    .eq('merchant_id', auth.profile_id)
     .single();
 
   if (error || !invoice) {
