@@ -98,7 +98,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     amount: invoice.amount,
     network: invoice.network,
     status: invoice.status,
-    payment_url: `${process.env.VITE_APP_URL || 'https://www.ravgateway.com'}/invoice/${invoice.id}`,
+    payment_url: `https://www.ravgateway.com/invoice/${invoice.id}`,
     tx_hash: invoice.tx_hash,
     issue_date: invoice.issue_date,
     due_date: invoice.due_date,
