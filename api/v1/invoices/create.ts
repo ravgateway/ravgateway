@@ -131,7 +131,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   return res.status(201).json({
     invoice_id: invoice.id,
     invoice_number: invoice.invoice_number,
-    payment_url: `${process.env.VITE_APP_URL || 'https://www.ravgateway.com'}/pay/${invoice.id}`,
+    payment_url: `${process.env.VITE_APP_URL || 'https://www.ravgateway.com'}/invoice/${invoice.id}`,
     client_email: invoice.client_email,
     client_name: invoice.client_name,
     amount: invoice.amount,
