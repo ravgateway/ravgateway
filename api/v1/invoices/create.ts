@@ -127,7 +127,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Failed to create invoice', details: error.message });
   }
 
-  // Return invoice details
+  // Return invoice detailss
   return res.status(201).json({
     invoice_id: invoice.id,
     invoice_number: invoice.invoice_number,
