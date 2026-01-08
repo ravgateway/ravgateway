@@ -92,8 +92,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return sum + (item.price * item.quantity);
   }, 0);
 
-  // Generate invoice number
-  const invoiceNumber = `INV-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+  // ✅ CHANGED: Generate invoice number using hash-based RPC
+  const { data: invoiceNumber, error: rpcError } = await supabase
+    .rpc('generate_invoice_number', { p_merchant_id: auth.profile_id });
+
+  if (rpcError || !invoiceNumber) {
+    console.error('Failed to generate invoice number:', rpcError);
+    return res.status(500).json({ 
+      error: 'Failed to generate invoice number',
+      details: rpcError?.message 
+    });
+  }
 
   // Calculate dates
   const issueDate = new Date();
@@ -127,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Failed to create invoice', details: error.message });
   }
 
-  // Return invoice detailss
+  // Return invoice details
   return res.status(201).json({
     invoice_id: invoice.id,
     invoice_number: invoice.invoice_number,
