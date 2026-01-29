@@ -38,10 +38,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+    <nav className="border-b bg-card/90 backdrop-blur-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-2 sm:py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-20 h-20 bg-background rounded-lg flex items-center justify-center white">           
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-lg flex items-center justify-center">           
             <img src="/rav-logo.png" alt="Rav logo w-8 h-8"/>
           </div>
         </Link>
