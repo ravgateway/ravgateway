@@ -19,10 +19,10 @@ const Footer = () => {
   return (
     <footer className="border-t bg-muted/30 mt-auto">
       <div className="container mx-auto px-4 py-6 sm:py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-          <div className="sm:col-span-2 md:col-span-1">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-3 sm:mb-4">
-              <div className="w-20 h-20 bg-background rounded-lg flex items-center justify-center black">           
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-background rounded-lg flex items-center justify-center black">           
                 <img src="/rav-logo.png" alt="Rav logo w-8 h-8"/>
               </div>
             </Link>
@@ -129,7 +129,7 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base text-foreground">Product</h3>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
